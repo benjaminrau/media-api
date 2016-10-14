@@ -1,0 +1,41 @@
+diff --git a/Model/CategoryInterface.php b/Model/CategoryInterface.php
+new file mode 100644
+index 0000000..c4de9a5
+--- /dev/null
++++ b/Model/CategoryInterface.php
+@@ -0,0 +1,23 @@
++<?php
++
++/*
++ * This file is part of the Sonata Project package.
++ *
++ * (c) Thomas Rabaix <thomas.rabaix@sonata-project.org>
++ *
++ * For the full copyright and license information, please view the LICENSE
++ * file that was distributed with this source code.
++ */
++
++namespace Sonata\MediaBundle\Model;
++
++interface CategoryInterface
++{
++    public function setContext($context);
++
++    public function setName($name);
++
++    public function setEnabled($enabled);
++
++    public function setPosition($position);
++}
+diff --git a/Model/Media.php b/Model/Media.php
+index 5c29039..9e7adb5 100644
+--- a/Model/Media.php
++++ b/Model/Media.php
+@@ -12,7 +12,6 @@
+ namespace Sonata\MediaBundle\Model;
+ 
+ use Imagine\Image\Box;
+-use Sonata\ClassificationBundle\Model\CategoryInterface;
+ use Symfony\Component\Validator\Context\ExecutionContextInterface;
+ use Symfony\Component\Validator\ExecutionContextInterface as LegacyExecutionContextInterface;
+ 

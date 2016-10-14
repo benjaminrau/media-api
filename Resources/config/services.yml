@@ -1,0 +1,8 @@
+services:
+    listener.media_event_post_listener:
+        class: Ins\MediaApiBundle\EventListener\PostLoadEventListener
+        arguments:
+            - '@service_container'
+            - '@request_stack'
+        tags:
+            - { name: 'doctrine.event_listener', event: 'postLoad'}

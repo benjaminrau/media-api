@@ -1,0 +1,19 @@
+{
+    "name": "ins/media-api",
+    "type": "project",
+    "description": "Example for integration of Sonata MediaBundle with ApiPlatform 2.0 including media upload and exposing media formats in GET item operation",
+    "require": {
+        "php": ">=7.0",
+        "symfony/symfony": "3.1.*",
+        "dunglas/action-bundle": "^0.3",
+        "sonata-project/media-bundle": "dev-master",
+        "cweagans/composer-patches": "^1.5"
+    },
+    "extra": {
+        "patches": {
+            "sonata-project/media-bundle": {
+                "Move CategoryInterface": "Resources/patches/media-bundle.patch"
+            }
+        }
+    }
+}
