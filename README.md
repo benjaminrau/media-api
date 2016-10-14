@@ -18,6 +18,11 @@ Example for integration of Sonata MediaBundle with ApiPlatform 2.0 including med
 ### app/config/config.yml
 
 ```
+dunglas_action:
+    directories:
+        - '../src/Emma/*Bundle/{Controller,Action,Command,EventSubscriber}'
+        - '../src/Ins/*Bundle/{Controller,Action,Command,EventSubscriber}'
+        
 sonata_media:
     class:
         media: YourBundle\Entity\MediaElement
@@ -33,7 +38,7 @@ media_action:
 
 ### src/YourBundle/Entity/MediaElement.php
 
-```
+```php
 <?php
 
 namespace YourBundle\Entity;
@@ -74,5 +79,66 @@ class MediaElement extends BaseMediaElement
 	public function canUserView(TokenInterface $token) {
 		return true;
 	}
+}
+```
+
+## Example
+
+### POST Request
+
+```
+POST /api/media_elements HTTP/1.1
+Host: localhost
+Content-Type: application/json
+
+{
+	"fileName": "testbild-83.png",
+	"data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABaQAAASMCAYAAAB3UopLAAAMF2lDQ1BJQ0MgUHJvZmlsZQAASImVlwdUU0kXx+eVFEJCC0RASuhNkF6l9yIgHWyEJEAoIQSCih1ZVHAtqFiwoisgCq4FkLUiioVFsPcNKirKuliwofJNEkD"
+}
+```
+
+### GET Request
+
+```
+GET /api/media_elements/f71e2f38-9230-11e6-b60a-ca5a65ec716d HTTP/1.1
+Host: localhost
+```
+
+### Response
+
+```json
+{
+  "@context": "/api/contexts/MediaElement",
+  "@id": "/api/media_elements/f71e2f38-9230-11e6-b60a-ca5a65ec716d",
+  "@type": "MediaElement",
+  "formats": [
+    {
+      "alt": "testbild-83.png",
+      "title": "testbild-83.png",
+      "src": "https://emma-api.devloc.site/uploads/media/default/0001/01/thumb_f71e2f38-9230-11e6-b60a-ca5a65ec716d_default_small.png",
+      "width": 79,
+      "height": 64,
+      "context": "default",
+      "format": "small"
+    },
+    {
+      "alt": "testbild-83.png",
+      "title": "testbild-83.png",
+      "src": "https://emma-api.devloc.site/uploads/media/default/0001/01/thumb_f71e2f38-9230-11e6-b60a-ca5a65ec716d_default_medium.png",
+      "width": 200,
+      "height": 161,
+      "context": "default",
+      "format": "medium"
+    },
+    {
+      "alt": "testbild-83.png",
+      "title": "testbild-83.png",
+      "src": "https://emma-api.devloc.site/uploads/media/default/0001/01/thumb_f71e2f38-9230-11e6-b60a-ca5a65ec716d_default_large.png",
+      "width": 799,
+      "height": 644,
+      "context": "default",
+      "format": "large"
+    }
+  ]
 }
 ```
