@@ -88,7 +88,7 @@ class MediaElement extends BaseMediaElement
 
 ```
 POST /api/media_elements HTTP/1.1
-Host: localhost
+Host: api.devloc.site
 Content-Type: application/json
 
 {
@@ -101,7 +101,7 @@ Content-Type: application/json
 
 ```
 GET /api/media_elements/f71e2f38-9230-11e6-b60a-ca5a65ec716d HTTP/1.1
-Host: localhost
+Host: api.devloc.site
 ```
 
 ### Response
@@ -115,7 +115,7 @@ Host: localhost
     {
       "alt": "testbild-83.png",
       "title": "testbild-83.png",
-      "src": "https://emma-api.devloc.site/uploads/media/default/0001/01/thumb_f71e2f38-9230-11e6-b60a-ca5a65ec716d_default_small.png",
+      "src": "https://api.devloc.site/uploads/media/default/0001/01/thumb_f71e2f38-9230-11e6-b60a-ca5a65ec716d_default_small.png",
       "width": 79,
       "height": 64,
       "context": "default",
@@ -124,7 +124,7 @@ Host: localhost
     {
       "alt": "testbild-83.png",
       "title": "testbild-83.png",
-      "src": "https://emma-api.devloc.site/uploads/media/default/0001/01/thumb_f71e2f38-9230-11e6-b60a-ca5a65ec716d_default_medium.png",
+      "src": "https://api.devloc.site/uploads/media/default/0001/01/thumb_f71e2f38-9230-11e6-b60a-ca5a65ec716d_default_medium.png",
       "width": 200,
       "height": 161,
       "context": "default",
@@ -133,7 +133,7 @@ Host: localhost
     {
       "alt": "testbild-83.png",
       "title": "testbild-83.png",
-      "src": "https://emma-api.devloc.site/uploads/media/default/0001/01/thumb_f71e2f38-9230-11e6-b60a-ca5a65ec716d_default_large.png",
+      "src": "https://api.devloc.site/uploads/media/default/0001/01/thumb_f71e2f38-9230-11e6-b60a-ca5a65ec716d_default_large.png",
       "width": 799,
       "height": 644,
       "context": "default",
