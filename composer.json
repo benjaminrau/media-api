@@ -9,6 +9,11 @@
         "sonata-project/media-bundle": "dev-master",
         "cweagans/composer-patches": "^1.5"
     },
+    "autoload": {
+        "psr-4": {
+            "Ins\\MediaApiBundle\\": ""
+        }
+    },
     "extra": {
         "patches": {
             "sonata-project/media-bundle": {
