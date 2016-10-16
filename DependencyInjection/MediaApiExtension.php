@@ -16,5 +16,9 @@ class MediaApiExtension extends Extension
 	{
 		$loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 		$loader->load('services.yml');
+
+		$container
+			->register('Ins\MediaApiBundle\Action\UploadAction', 'Ins\MediaApiBundle\Action\UploadAction')
+			->setAutowired(true);
 	}
 }
