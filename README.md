@@ -69,10 +69,6 @@ class MediaElement extends BaseMediaElement
      * @Groups({"api_mediaelement_get_item", "api_article_get_item", "api_article_get_collection"})
      */
     protected $formats;
-
-	public function canUserView(TokenInterface $token) {
-		return true;
-	}
 }
 ```
 
