@@ -5,7 +5,6 @@ Example for integration of Sonata MediaBundle with ApiPlatform 2.0 including med
 
 - Symfony 3.1
 - Sonata MediaBundle
-- Dunglas ActionBundle
 
 ## Setup
 
@@ -18,11 +17,6 @@ Example for integration of Sonata MediaBundle with ApiPlatform 2.0 including med
 ### app/config/config.yml
 
 ```
-dunglas_action:
-    directories:
-        - '../src/Emma/*Bundle/{Controller,Action,Command,EventSubscriber}'
-        - '../src/Ins/*Bundle/{Controller,Action,Command,EventSubscriber}'
-        
 sonata_media:
     class:
         media: YourBundle\Entity\MediaElement
