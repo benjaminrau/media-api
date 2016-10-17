@@ -15,7 +15,7 @@
     "extra": {
         "patches": {
             "sonata-project/media-bundle": {
-                "Move CategoryInterface": "Resources/patches/media-bundle.patch"
+                "Move CategoryInterface": "vendor/ins/media-api/Resources/patches/media-bundle.patch"
             }
         }
     }
