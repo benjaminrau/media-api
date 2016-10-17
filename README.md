@@ -5,6 +5,7 @@ Example for integration of Sonata MediaBundle with ApiPlatform 2.0 including med
 
 - Symfony 3.1
 - Sonata MediaBundle
+- Cweagans Composer Patches
 
 ## Setup
 
@@ -14,7 +15,21 @@ Example for integration of Sonata MediaBundle with ApiPlatform 2.0 including med
 - Configure Sonata MediaBundle to use your MediaElement class
 - Add routing configuration for UploadAction
 
+### Your projects main composer.json
+
+If you have Sonata Classification configured and enabled, you can skip this change. There are some hard dependencies to Sonata Classification Bundle in Media Bundle yet, most of them are resolved in current GIT master, but some are left. Enable patches, to apply the patch we provide to resolve the last dependency, and to use MediaBundle without Classification Bundle.
+
+```
+{ 
+  "extra": {
+      "enable-patching": true
+  }
+}
+```
+
 ### app/config/config.yml
+
+Tell Sonata MediaBundle which Entity to use from your Bundle for Media elements.
 
 ```
 sonata_media:
@@ -24,6 +39,8 @@ sonata_media:
 
 ### app/config/routing.yml
 
+Load the routing for upload action that is configured in UploadAction class as annotation on __invoke() method.
+
 ```
 media_action:
     resource: '@MediaApiBundle/Action/'
@@ -31,6 +48,9 @@ media_action:
 ```
 
 ### src/YourBundle/Entity/MediaElement.php
+
+Setup your Media entitiy. If you are using this with Api Platform and Serialization Groups, you will have to define all inherited properties from extended class in your entity, to define serialization groups.
+In this example we define $formats property which is already declared in extended class, to add some serialization groups.
 
 ```php
 <?php
@@ -88,6 +108,8 @@ Content-Type: application/json
 ```
 
 ### GET Request
+
+This GET item operation is fully served by Api Platform. Media Api Bundle is not taking care of it, we only intercept postLoad event to set formats property in your Media entity.
 
 ```
 GET /api/media_elements/f71e2f38-9230-11e6-b60a-ca5a65ec716d HTTP/1.1
