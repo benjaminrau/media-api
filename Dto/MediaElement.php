@@ -19,6 +19,15 @@ class MediaElement
 	private $data;
 
 	/**
+	 * @param string $fileName
+	 * @param string $data
+	 */
+	function __construct($fileName, $data) {
+		$this->data = $data;
+		$this->fileName = $fileName;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function getData() {
