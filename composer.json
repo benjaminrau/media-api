@@ -6,7 +6,8 @@
         "php": ">=7.0",
         "symfony/symfony": "3.1.*",
         "sonata-project/media-bundle": "dev-master",
-        "cweagans/composer-patches": "^1.5"
+        "cweagans/composer-patches": "^1.5",
+        "sensio/buzz-bundle": "dev-master"
     },
     "autoload": {
         "psr-4": {

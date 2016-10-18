@@ -15,6 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\DependencyInjection\Container;
 use Ins\MediaApiBundle\Dto as Dto;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UploadAction
 {
@@ -73,7 +74,13 @@ class UploadAction
 			$mediaElement->setProviderName($mediaElement->getProviderForMimeType($mediaElementDto->getMimeType()));
 			$this->mediaManager->save($mediaElement);
 
-			return new RedirectResponse($this->router->generate('api_media_elements_get_item', array('id' => $mediaElement->getId())));
+			$buzz = $this->container->get('buzz');
+			$buzzResponse = $buzz->get(
+				$this->router->generate('api_media_elements_get_item', array('id' => $mediaElement->getId()), Router::ABSOLUTE_URL),
+				['authorization' => $request->headers->get('authorization')]
+			);
+
+			return new JsonResponse($buzzResponse->getContent(), Response::HTTP_CREATED, $headers = array("Content-Type" => "application/ld+json"), true);
 		}
 
 		return new Response('', Response::HTTP_BAD_REQUEST);
