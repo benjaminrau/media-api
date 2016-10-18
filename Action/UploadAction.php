@@ -66,12 +66,12 @@ class UploadAction
 		/** @var Dto\MediaElement $mediaElementDto */
 		$mediaElementDto = $this->serializer->deserialize($request->getContent(), Dto\MediaElement::class,  $request->getContentType());
 
-		if (MediaElement::isSupportedMimeType($mediaElementDto->getMimeType()) && $uploadedFile = $this->createTempFile($mediaElementDto)) {
-			$class = $this->container->getParameter('sonata.media.media.class');
-			$mediaElement = new $class;
-			$mediaElement->setBinaryContent($uploadedFile);
-			$mediaElement->setContext('default');
-			$mediaElement->setProviderName($mediaElement->getProviderForMimeType($mediaElementDto->getMimeType()));
+		if (
+			MediaElement::isSupportedMimeType($mediaElementDto->getMimeType()) &&
+			$mediaElement = self::createMediaElement(
+				$this->container->getParameter('sonata.media.media.class'),
+				$mediaElementDto)
+		) {
 			$this->mediaManager->save($mediaElement);
 
 			$buzz = $this->container->get('buzz');
@@ -87,10 +87,25 @@ class UploadAction
 	}
 
 	/**
+	 * @param string $class
+	 * @param Dto\MediaElement $mediaElementDto
+	 * @return MediaElement
+	 */
+	public static function createMediaElement($class, Dto\MediaElement $mediaElementDto) {
+		/** @var MediaElement $mediaElement */
+		$mediaElement = new $class;
+		$mediaElement->setBinaryContent(self::createTempFile($mediaElementDto));
+		$mediaElement->setContext('default');
+		$mediaElement->setProviderName($mediaElement->getProviderForMimeType($mediaElementDto->getMimeType()));
+
+		return $mediaElement;
+	}
+
+	/**
 	 * @param Dto\MediaElement $mediaElementDto
 	 * @return UploadedFile
 	 */
-	private function createTempFile(Dto\MediaElement $mediaElementDto) {
+	private static function createTempFile(Dto\MediaElement $mediaElementDto) {
 		if (!$binaryContent = $mediaElementDto->getBinaryContent())
 		{
 			return false;
