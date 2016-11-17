@@ -3,8 +3,6 @@
     "type": "project",
     "description": "Example for integration of Sonata MediaBundle with ApiPlatform 2.0 including media upload and exposing media formats in GET item operation",
     "require": {
-        "php": ">=7.0",
-        "symfony/symfony": "dev-master",
         "sonata-project/media-bundle": "dev-master",
         "cweagans/composer-patches": "^1.5",
         "sensio/buzz-bundle": "dev-master"
