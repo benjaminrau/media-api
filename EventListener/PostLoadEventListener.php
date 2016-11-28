@@ -30,7 +30,7 @@ class PostLoadEventListener {
     {
         $class = $this->container->getParameter('sonata.media.media.class');
         $entity = $args->getEntity();
-        if ($entity instanceof $class && $entity->getProviderName()) {
+        if ($entity instanceof $class && $entity->getProviderName() && $this->requestStack->getCurrentRequest()) {
 			/** @var MediaProviderInterface $provider */
             $provider = $this->container->get($entity->getProviderName());
 
