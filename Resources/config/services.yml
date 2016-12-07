@@ -6,3 +6,18 @@ services:
             - '@request_stack'
         tags:
             - { name: 'doctrine.event_listener', event: 'postLoad'}
+
+    sonata.media.provider.sproutvideo:
+        class: Ins\MediaApiBundle\Provider\SproutVideoProvider
+        tags:
+            - { name: 'sonata.media.provider' }
+        arguments:
+            - 'sonata.media.provider.sproutvideo'
+            - '@sonata.media.filesystem.local'
+            - '@sonata.media.cdn.server'
+            - '@sonata.media.generator.default'
+            - '@sonata.media.thumbnail.format'
+            - '@sonata.media.buzz.browser'
+            - '@sonata.media.metadata.proxy'
+        calls:
+            -  [ setTemplates, [ { helper_thumbnail: MediaApiBundle:Provider:thumbnail.html.twig, helper_view: MediaApiBundle:Provider:view_sproutvideo.html.twig } ] ]

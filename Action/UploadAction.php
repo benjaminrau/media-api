@@ -95,8 +95,12 @@ class UploadAction
 		/** @var MediaElement $mediaElement */
 		$mediaElement = new $class;
 		$mediaElement->setBinaryContent(self::createTempFile($mediaElementDto));
-		$mediaElement->setContext('default');
-		$mediaElement->setProviderName($mediaElement->getProviderForMimeType($mediaElementDto->getMimeType()));
+
+        $providerName = $mediaElement->getProviderForMimeType($mediaElementDto->getMimeType());
+        $providerNameParts = explode('.', $providerName);
+
+		$mediaElement->setContext(end($providerNameParts));
+		$mediaElement->setProviderName($providerName);
 
 		return $mediaElement;
 	}
