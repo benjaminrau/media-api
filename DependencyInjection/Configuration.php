@@ -13,6 +13,7 @@ class Configuration implements ConfigurationInterface
 			->root('media_api')
 			->children()
 				->scalarNode('sproutvideo_apikey')->end()
+				->scalarNode('sproutvideo_notification_url')->end()
 			->end();
 
 		return $treeBuilder;

@@ -12,11 +12,13 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 class SproutVideoProvider extends BaseVideoProvider
 {
     public static $STATE_TO_PROVIDERSTATUS = array(
-        'Inspecting' => MediaInterface::STATUS_PENDING,
-        'Processing' => MediaInterface::STATUS_ENCODING,
-        'Deployed' => MediaInterface::STATUS_OK,
-        'Failed' => MediaInterface::STATUS_ERROR,
+        'inspecting' => MediaInterface::STATUS_PENDING,
+        'processing' => MediaInterface::STATUS_ENCODING,
+        'deployed' => MediaInterface::STATUS_OK,
+        'failed' => MediaInterface::STATUS_ERROR,
     );
+
+    public static $NOTIFICATION_URL;
 
     /**
      * @param array $configuration
@@ -24,6 +26,7 @@ class SproutVideoProvider extends BaseVideoProvider
     public function setConfiguration($configuration)
     {
         SproutVideo::$api_key = $configuration['sproutvideo_apikey'];
+        self::$NOTIFICATION_URL = $configuration['sproutvideo_notification_url'];
     }
 
     /**
@@ -134,7 +137,7 @@ class SproutVideoProvider extends BaseVideoProvider
             return;
         }
 
-        $metadata = SproutVideo\Video::create_video($media->getBinaryContent()->getPathname(), array('title' => $media->getName(), 'privacy' => 0, 'notification_url' => 'https:///emma-api.inscript-projects.com/webhook/sproutvideo/event'));
+        $metadata = SproutVideo\Video::create_video($media->getBinaryContent()->getPathname(), array('title' => $media->getName(), 'privacy' => 0, 'hide_on_site' => true, 'notification_url' => self::$NOTIFICATION_URL));
 
         $media->setBinaryContent($metadata['id']);
     }
