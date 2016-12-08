@@ -16,6 +16,7 @@ use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\DependencyInjection\Container;
 use Ins\MediaApiBundle\Dto as Dto;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\VarDumper\VarDumper;
 
 class UploadAction
 {
@@ -99,8 +100,10 @@ class UploadAction
         $providerName = $mediaElement->getProviderForMimeType($mediaElementDto->getMimeType());
         $providerNameParts = explode('.', $providerName);
 
+        $mediaElement->setName($mediaElementDto->getFileName());
 		$mediaElement->setContext(end($providerNameParts));
 		$mediaElement->setProviderName($providerName);
+        $mediaElement->setContentType($mediaElementDto->getMimeType());
 
 		return $mediaElement;
 	}
@@ -115,7 +118,7 @@ class UploadAction
 			return false;
 		}
 
-		$temporaryFileName = tempnam(sys_get_temp_dir(), 'upload_action_');
+		$temporaryFileName = tempnam(sys_get_temp_dir(), 'upload_action_') . "." . pathinfo($mediaElementDto->getFileName(), PATHINFO_EXTENSION);
 
 		file_put_contents($temporaryFileName, $binaryContent);
 

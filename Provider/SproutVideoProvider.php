@@ -2,23 +2,28 @@
 
 namespace Ins\MediaApiBundle\Provider;
 
-use Behat\Testwork\ServiceContainer\Exception\ConfigurationLoadingException;
 use Sonata\CoreBundle\Model\Metadata;
 use Sonata\MediaBundle\Model\MediaInterface;
 use Sonata\MediaBundle\Provider\BaseVideoProvider;
+use SproutVideo;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class SproutVideoProvider extends BaseVideoProvider
 {
-
-    private static $apiKey;
+    public static $STATE_TO_PROVIDERSTATUS = array(
+        'Inspecting' => MediaInterface::STATUS_PENDING,
+        'Processing' => MediaInterface::STATUS_ENCODING,
+        'Deployed' => MediaInterface::STATUS_OK,
+        'Failed' => MediaInterface::STATUS_ERROR,
+    );
 
     /**
      * @param array $configuration
      */
     public function setConfiguration($configuration)
     {
-        self::$apiKey = $configuration['sproutvideo_apikey'];
+        SproutVideo::$api_key = $configuration['sproutvideo_apikey'];
     }
 
     /**
@@ -38,6 +43,13 @@ class SproutVideoProvider extends BaseVideoProvider
         switch ($format) {
             case 'sproutvideo_embed':
                 $src = sprintf('https://videos.sproutvideo.com/embed/%s/%s?type=hd&playerColor=2f3437&playerTheme=light', $media->getProviderReference(), $metadata['security_token']);
+                break;
+            case 'sproutvideo_poster':
+                $src = $metadata['assets']['poster_frames'][0];
+                break;
+            case 'sproutvideo_thumbnail':
+                $src = $metadata['assets']['thumbnails'][1];
+                break;
         }
 
         $params = array('src' => $src);
@@ -57,10 +69,8 @@ class SproutVideoProvider extends BaseVideoProvider
      */
     public function updateMetadata(MediaInterface $media, $force = false)
     {
-        $url = sprintf('https://api.sproutvideo.com/v1/videos/%s', $media->getProviderReference());
-
         try {
-            $metadata = $this->getMetadata($media, $url);
+            $metadata = $this->getMetadata($media, null);
         } catch (\RuntimeException $e) {
             $media->setEnabled(false);
             $media->setProviderStatus(MediaInterface::STATUS_ERROR);
@@ -74,10 +84,12 @@ class SproutVideoProvider extends BaseVideoProvider
         // update Media common fields from metadata
         if ($force) {
             $media->setName($metadata['title']);
-            $media->setDescription($metadata['description']);
-            $media->setAuthorName($metadata['author_name']);
+            $media->setDescription(isset($metadata['description']) ? $metadata['description'] : null);
+            $media->setAuthorName(isset($metadata['author_name']) ? $metadata['author_name'] : null);
         }
 
+        $media->setProviderStatus(isset(self::$STATE_TO_PROVIDERSTATUS[$metadata['state']]) ? self::$STATE_TO_PROVIDERSTATUS[$metadata['state']] : self::$STATE_TO_PROVIDERSTATUS['Failed']);
+        $media->setEnabled($media->getProviderStatus() === MediaInterface::STATUS_OK);
         $media->setHeight($metadata['height']);
         $media->setWidth($metadata['width']);
         $media->setLength($metadata['duration']);
@@ -87,22 +99,19 @@ class SproutVideoProvider extends BaseVideoProvider
      * @throws \RuntimeException
      *
      * @param MediaInterface $media
-     * @param string         $url
      *
      * @return mixed
      */
     protected function getMetadata(MediaInterface $media, $url)
     {
         try {
-            $response = $this->browser->get($url, array('SproutVideo-Api-Key' => self::$apiKey));
+            $metadata = SproutVideo\Video::get_video($media->getProviderReference());
         } catch (\RuntimeException $e) {
-            throw new \RuntimeException('Unable to retrieve the video information for :'.$url, null, $e);
+            throw new \RuntimeException('Unable to retrieve the video information for :'.$media->getProviderReference(), null, $e);
         }
 
-        $metadata = json_decode($response->getContent(), true);
-
         if (!$metadata) {
-            throw new \RuntimeException('Unable to decode the video information for :'.$url);
+            throw new \RuntimeException('Unable to decode the video information for :'.$media->getProviderReference());
         }
 
         return $metadata;
@@ -121,13 +130,13 @@ class SproutVideoProvider extends BaseVideoProvider
      */
     protected function fixBinaryContent(MediaInterface $media)
     {
-        if (!$media->getBinaryContent()) {
+        if (!$media->getBinaryContent() && !$media->getBinaryContent() instanceof UploadedFile) {
             return;
         }
 
-        if (preg_match("/sproutvideo\.com\/(videos\/|)(\.+)/", $media->getBinaryContent(), $matches)) {
-            $media->setBinaryContent($matches[2]);
-        }
+        $metadata = SproutVideo\Video::create_video($media->getBinaryContent()->getPathname(), array('title' => $media->getName(), 'privacy' => 0, 'notification_url' => 'https:///emma-api.inscript-projects.com/webhook/sproutvideo/event'));
+
+        $media->setBinaryContent($metadata['id']);
     }
 
     /**
@@ -144,7 +153,7 @@ class SproutVideoProvider extends BaseVideoProvider
         // store provider information
         $media->setProviderName($this->name);
         $media->setProviderReference($media->getBinaryContent());
-        $media->setProviderStatus(MediaInterface::STATUS_OK);
+        $media->setProviderStatus(MediaInterface::STATUS_SENDING);
 
         $this->updateMetadata($media, true);
     }

@@ -24,6 +24,10 @@ class MediaApiExtension extends Extension
 			->register('Ins\MediaApiBundle\Action\UploadAction', 'Ins\MediaApiBundle\Action\UploadAction')
 			->setAutowired(true);
 
+        $container
+            ->register('Ins\MediaApiBundle\Action\SproutVideoEventAction', 'Ins\MediaApiBundle\Action\SproutVideoEventAction')
+            ->setAutowired(true);
+
         $definition = $container->getDefinition('sonata.media.provider.sproutvideo');
         $definition->addMethodCall('setConfiguration', array($processedConfiguration));
 	}
