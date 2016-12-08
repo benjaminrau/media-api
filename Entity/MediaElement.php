@@ -23,6 +23,11 @@ class MediaElement extends BaseMedia
 		'image/bmp' => self::PROVIDER_IMAGE,
 		'application/pdf' => self::PROVIDER_FILE,
         'video/mp4' => self::PROVIDER_SPROUTVIDEO,
+        'video/ogg' => self::PROVIDER_SPROUTVIDEO,
+        'video/webm' => self::PROVIDER_SPROUTVIDEO,
+        'video/mpeg' => self::PROVIDER_SPROUTVIDEO,
+        'video/quicktime' => self::PROVIDER_SPROUTVIDEO,
+        'video/x-msvideo' => self::PROVIDER_SPROUTVIDEO,
 	);
 
     /**
