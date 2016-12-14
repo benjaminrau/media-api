@@ -14,6 +14,7 @@ class Configuration implements ConfigurationInterface
 			->children()
 				->scalarNode('sproutvideo_apikey')->end()
 				->scalarNode('sproutvideo_notification_url')->end()
+				->scalarNode('upload_max_filesize')->defaultValue('50M')->end()
 			->end();
 
 		return $treeBuilder;

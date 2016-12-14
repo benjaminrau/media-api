@@ -30,5 +30,7 @@ class MediaApiExtension extends Extension
 
         $definition = $container->getDefinition('sonata.media.provider.sproutvideo');
         $definition->addMethodCall('setConfiguration', array($processedConfiguration));
+
+        $container->setParameter('media_api.upload_max_filesize',$processedConfiguration['upload_max_filesize']);
 	}
 }

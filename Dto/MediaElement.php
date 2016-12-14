@@ -2,7 +2,9 @@
 
 namespace Ins\MediaApiBundle\Dto;
 
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
+use Ins\MediaApiBundle\Validator\Constraints as MediaApiAssert;
 
 class MediaElement
 {
@@ -11,6 +13,13 @@ class MediaElement
 	 * @Assert\NotNull
 	 */
     private $fileName;
+
+    /**
+     * @var UploadedFile
+     * @Assert\NotBlank
+     * @MediaApiAssert\File
+     */
+    private $file;
 
 	/**
 	 * @var string
@@ -22,7 +31,7 @@ class MediaElement
 	 * @param string $fileName
 	 * @param string $data
 	 */
-	function __construct($fileName, $data) {
+	function __construct($fileName = '', $data = '') {
 		$this->data = $data;
 		$this->fileName = $fileName;
 	}
@@ -69,6 +78,28 @@ class MediaElement
 		$attributes = $this->extractAttributes();
 		return $attributes['base64Content'];
 	}
+
+    /**
+     * @return UploadedFile
+     */
+    public function getFile()
+    {
+        return $this->file;
+    }
+
+    /**
+     * @param UploadedFile $file
+     */
+    public function setFile(UploadedFile $file)
+    {
+        $this->file = $file;
+        $this->fileName = $file->getClientOriginalName();
+    }
+
+    public function processDataAfterValidation()
+    {
+        $this->data = 'data:' . $this->file->getMimeType() .';base64,' . base64_encode(file_get_contents($this->file->getPathname()));
+    }
 
 	/**
 	 * @return array

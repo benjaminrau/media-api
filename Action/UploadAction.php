@@ -7,6 +7,7 @@ use Ins\MediaApiBundle\Entity\MediaElement;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sonata\MediaBundle\Entity\MediaManager;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,13 +60,20 @@ class UploadAction
 	 */
 	public function __invoke(Request $request)
 	{
-		if ($request->getContentType() !== 'json')
+		if ($request->getContentType() === 'json')
 		{
-			return null;
-		}
-
-		/** @var Dto\MediaElement $mediaElementDto */
-		$mediaElementDto = $this->serializer->deserialize($request->getContent(), Dto\MediaElement::class,  $request->getContentType());
+            /** @var Dto\MediaElement $mediaElementDto */
+            $mediaElementDto = $this->serializer->deserialize($request->getContent(), Dto\MediaElement::class, $request->getContentType());
+		} else {
+            $mediaElementDto = new Dto\MediaElement();
+            $form = $this->container->get('form.factory')->createNamed('','Ins\MediaApiBundle\Form\MediaElementType', $mediaElementDto);
+            $form->handleRequest($request);
+            if ($form->isValid()) {
+                $mediaElementDto->processDataAfterValidation();
+            } else {
+                return new JsonResponse(json_encode($this->getFormErrors($form)), Response::HTTP_BAD_REQUEST, $headers = array("Content-Type" => "application/json"), true);
+            }
+        }
 
 		if (
 			MediaElement::isSupportedMimeType($mediaElementDto->getMimeType()) &&
@@ -127,4 +135,44 @@ class UploadAction
 			$mediaElementDto->getFileName()
 		);
 	}
+
+    protected function getFormErrors(FormInterface $form)
+    {
+        $errors = array();
+
+        // Global
+        foreach ($form->getErrors() as $error) {
+            $errors[] = [
+                'propertyPath' => $form->getName(),
+                'message' => $error->getMessage()
+            ];
+        }
+
+        // Fields
+        foreach ($form as $child /** @var FormInterface $child */) {
+            if (!$child->isValid()) {
+                if ($child->count()) {
+                    foreach ($child as $subchild) {
+                        if (!$subchild->isValid()) {
+                            foreach ($subchild->getErrors(true) as $error) {
+                                $errors[] = [
+                                    'propertyPath' => $child->getName().ucfirst($subchild->getName()),
+                                    'message' => $error->getMessage()
+                                ];
+                            }
+                        }
+                    }
+                } else {
+                    foreach ($child->getErrors(true) as $error) {
+                        $errors[] = [
+                            'propertyPath' => $child->getName(),
+                            'message' => $error->getMessage()
+                        ];
+                    }
+                }
+            }
+        }
+
+        return $errors;
+    }
 }
