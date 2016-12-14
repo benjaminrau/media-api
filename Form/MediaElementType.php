@@ -20,6 +20,7 @@ class MediaElementType extends AbstractType
     {
         $resolver->setDefaults(array(
             'csrf_protection' => false,
+            'allow_extra_fields' => true,
         ));
     }
 
