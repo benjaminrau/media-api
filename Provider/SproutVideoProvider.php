@@ -42,20 +42,21 @@ class SproutVideoProvider extends BaseVideoProvider
             $metadata = $media->getProviderMetadata();
         }
 
-        $src = '';
+        $params = [];
         switch ($format) {
             case 'sproutvideo_embed':
-                $src = sprintf('https://videos.sproutvideo.com/embed/%s/%s?type=hd&playerColor=2f3437&playerTheme=light', $media->getProviderReference(), $metadata['security_token']);
+                $params['src'] = sprintf('https://videos.sproutvideo.com/embed/%s/%s?type=hd&playerColor=2f3437&playerTheme=light', $media->getProviderReference(), $metadata['security_token']);
+                $params['width'] = $media->getWidth();
+                $params['height'] = $media->getHeight();
                 break;
             case 'sproutvideo_poster':
-                $src = $metadata['assets']['poster_frames'][0];
+                $params['src'] = $metadata['assets']['poster_frames'][0];
                 break;
             case 'sproutvideo_thumbnail':
-                $src = $metadata['assets']['thumbnails'][1];
+                $params['src'] = $metadata['assets']['thumbnails'][1];
                 break;
         }
 
-        $params = array('src' => $src);
         return $params;
     }
 
