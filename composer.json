@@ -5,6 +5,7 @@
     "require": {
         "sonata-project/media-bundle": "dev-master",
         "cweagans/composer-patches": "^1.5",
+        "liip/imagine-bundle": "^1.6",
         "sensio/buzz-bundle": "dev-master"
     },
     "autoload": {
