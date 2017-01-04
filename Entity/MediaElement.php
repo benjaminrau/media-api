@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class MediaElement extends BaseMedia
 {
 	const PROVIDER_IMAGE = "sonata.media.provider.image";
-	const PROVIDER_FILE = "sonata.media.provider.file";
+	const PROVIDER_PDF_FILE = "sonata.media.provider.pdf";
 	const PROVIDER_SPROUTVIDEO = "sonata.media.provider.sproutvideo";
 
 	public static $MIMETYPE_TO_PROVIDER = array(
@@ -21,7 +21,7 @@ class MediaElement extends BaseMedia
 		'image/jpg' => self::PROVIDER_IMAGE,
 		'image/jpeg' => self::PROVIDER_IMAGE,
 		'image/bmp' => self::PROVIDER_IMAGE,
-		'application/pdf' => self::PROVIDER_FILE,
+		'application/pdf' => self::PROVIDER_PDF_FILE,
         'video/mp4' => self::PROVIDER_SPROUTVIDEO,
         'video/ogg' => self::PROVIDER_SPROUTVIDEO,
         'video/webm' => self::PROVIDER_SPROUTVIDEO,

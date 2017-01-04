@@ -39,8 +39,13 @@ class PostLoadEventListener {
 					return;
 				}
 
-				list($context, $formatName) = explode('_', $key);
-				$format = $provider->getHelperProperties($entity, $key);
+                list($context, $formatName) = explode('_', $key);
+                $format = $provider->getHelperProperties($entity, $key);
+
+                if ($class::PROVIDER_PDF_FILE == $entity->getProviderName()) {
+                    $format['thumbnail'] = $this->requestStack->getCurrentRequest()->getSchemeAndHttpHost() . $format['thumbnail'];
+                }
+
 				if (isset($format['src']) && strpos($format['src'], '/') === 0) {
 					$format['src'] = $this->requestStack->getCurrentRequest()->getSchemeAndHttpHost() . $format['src'];
 				}

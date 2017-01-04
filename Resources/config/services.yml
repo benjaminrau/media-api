@@ -1,3 +1,7 @@
+parameters:
+    sonata.media.thumbnail.liip_imagine: Ins\MediaApiBundle\Thumbnail\LiipImagineThumbnail
+    ins_imagine.controller.class: Ins\MediaApiBundle\Controller\ImagineController
+
 services:
     listener.media_event_post_listener:
         class: Ins\MediaApiBundle\EventListener\PostLoadEventListener
@@ -22,9 +26,26 @@ services:
         calls:
             -  [ setTemplates, [ { helper_thumbnail: MediaApiBundle:Provider:thumbnail.html.twig, helper_view: MediaApiBundle:Provider:view_sproutvideo.html.twig } ] ]
 
+    sonata.media.provider.pdf:
+        class: Ins\MediaApiBundle\Provider\PdfProvider
+        tags:
+            - { name: 'sonata.media.provider' }
+        arguments: ['','','','','','','','','@sonata.media.metadata.proxy','@service_container']
+        calls:
+            -  [ setTemplates, [ { helper_thumbnail: MediaApiBundle:Provider:thumbnail.html.twig, helper_view: MediaApiBundle:Provider:view_pdf.html.twig } ] ]
+
     media_api.file.validator:
         class: Ins\MediaApiBundle\Validator\Constraints\FileValidator
         arguments:
             - '@service_container'
         tags:
             - { name: validator.constraint_validator, alias: media_api.file.validator }
+
+    ins_imagine.controller:
+        class: '%ins_imagine.controller.class%'
+        arguments:
+            - '@liip_imagine.data.manager'
+            - '@liip_imagine.filter.manager'
+            - '@liip_imagine.cache.manager'
+            - '@liip_imagine.cache.signer'
+            - '@service_container'
