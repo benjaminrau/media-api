@@ -69,7 +69,11 @@ class UploadAction
             $form = $this->container->get('form.factory')->createNamed('','Ins\MediaApiBundle\Form\MediaElementType', $mediaElementDto);
             $form->handleRequest($request);
             if (!$form->isValid()) {
-                return new JsonResponse(json_encode($this->getFormErrors($form)), Response::HTTP_BAD_REQUEST, $headers = array("Content-Type" => "application/json"), true);
+                $errors = [];
+                foreach ($this->getFormErrors($form) as $error) {
+                    $errors[] = $error['message'].' ';
+                }
+                return new JsonResponse(json_encode($errors), Response::HTTP_BAD_REQUEST, $headers = array("Content-Type" => "application/json"), true);
             }
         }
 
