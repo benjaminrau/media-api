@@ -62,34 +62,10 @@ class PdfProvider extends FileProvider
      */
     public function getHelperProperties(MediaInterface $media, $format, $options = array())
     {
-
-        $settings = $this->getFormat($format);
-
-        if (isset($options['width']))
-            $settings['width'] = $options['width'];
-
-        if (isset($options['height']))
-            $settings['height'] = $options['height'];
-
-        $src = $this->generatePublicUrl($media, $format);
-        
-        $file     = $this->getReferenceFile($media);
-        $path_pdf = $this->getCdnPath($this->getReferenceImage($media), $media->getCdnIsFlushable());
-        $path_img = pathinfo($path_pdf, PATHINFO_DIRNAME) . '/' . pathinfo($path_pdf, PATHINFO_FILENAME) . '.jpg';
-        $tmpFile = sprintf('%s.%s', tempnam(sys_get_temp_dir(), 'sonata_media_liip_imagine'), $media->getExtension());
-        
-        if (!file_exists($this->container->getParameter('kernel.root_dir').'/../web'.$path_img)) {
-            file_put_contents($tmpFile, $file->getContent());
-            exec("convert -density 72x72 -quality 100 {$tmpFile}[0] {$this->container->getParameter('kernel.root_dir')}/../web{$path_img}");
-        }
-
         return array_merge(array(
             'alt'       => $media->getName(),
             'title'     => $media->getName(),
-            'src'       => $this->getCdnPath($this->getReferenceImage($media), true),
-            'thumbnail' => $src,
-            'width'     => $settings['width'],
-            'height'    => $settings['height']
+            'src'       => $this->getCdnPath($this->getReferenceImage($media), true)
         ), $options);
     }
 }
