@@ -8,10 +8,10 @@ use Ins\MediaApiBundle\Validator\Constraints as MediaApiAssert;
 
 class MediaElement
 {
-	/**
-	 * @var string
-	 * @Assert\NotNull
-	 */
+    /**
+     * @var string
+     * @Assert\NotNull
+     */
     private $fileName;
 
     /**
@@ -21,63 +21,74 @@ class MediaElement
      */
     private $file;
 
-	/**
-	 * @var string
-	 * @Assert\NotNull
-	 */
-	private $data;
+    /**
+     * @var string
+     * @Assert\NotNull
+     */
+    private $data;
 
-	/**
-	 * @param string $fileName
-	 * @param string $data
-	 */
-	function __construct($fileName = '', $data = '') {
-		$this->data = $data;
-		$this->fileName = $fileName;
-	}
+    /**
+     * @var array | null
+     */
+    private $attributes = null;
 
-	/**
-	 * @return string
-	 */
-	public function getData() {
-		return $this->data;
-	}
+    /**
+     * @param string $fileName
+     * @param string $data
+     */
+    function __construct($fileName = '', $data = '') {
+        $this->data = $data;
+        $this->fileName = $fileName;
+    }
 
-	/**
-	 * @param string $data
-	 */
-	public function setData($data) {
-		$this->data = $data;
-	}
+    /**
+     * @return string
+     */
+    public function getData() {
+        return $this->data;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getFileName() {
-		return $this->fileName;
-	}
+    /**
+     * @param string $data
+     */
+    public function setData($data) {
+        $this->data = $data;
+    }
 
-	/**
-	 * @param string $fileName
-	 */
-	public function setFileName($fileName) {
-		$this->fileName = $fileName;
-	}
+    /**
+     * @return string
+     */
+    public function getFileName() {
+        return $this->fileName;
+    }
 
-	public function getMimeType() {
-		$attributes = $this->extractAttributes();
-		return $attributes['mimeType'];
-	}
+    /**
+     * @param string $fileName
+     */
+    public function setFileName($fileName) {
+        $this->fileName = $fileName;
+    }
 
-	public function getBinaryContent() {
-		$attributes = $this->extractAttributes();
-		return $attributes['binaryContent'];
-	}
+    public function getMimeType() {
+        if (!$this->attributes) {
+            $this->extractAttributes();
+        }
+        return $this->attributes['mimeType'];
+    }
 
-	public function getBase64Content() {
-		$attributes = $this->extractAttributes();
-		return $attributes['base64Content'];
-	}
+    public function getBinaryContent() {
+        if (!$this->attributes) {
+            $this->extractAttributes();
+        }
+        return $this->attributes['binaryContent'];
+    }
+
+    public function getBase64Content() {
+        if (!$this->attributes) {
+            $this->extractAttributes();
+        }
+        return $this->attributes['base64Content'];
+    }
 
     /**
      * @return UploadedFile
@@ -96,34 +107,32 @@ class MediaElement
         $this->fileName = $file->getClientOriginalName();
     }
 
-	/**
-	 * @return array
-	 */
-	private function extractAttributes() {
-		$attributes = array(
-			'base64Content' => '',
-			'binaryContent' => '',
-			'mimeType' => '',
-			'fileExtension' => '',
-		);
+    /**
+     * @return array
+     */
+    private function extractAttributes() {
+        $this->attributes = array(
+            'base64Content' => '',
+            'binaryContent' => '',
+            'mimeType' => '',
+            'fileExtension' => '',
+        );
 
-		if ($this->getData()) {
+        if ($this->data) {
 
             list($mimeType, $data) = explode(';', $this->getData());
-            list(, $attributes['mimeType'])      = explode(':', $mimeType);
-            list(, $attributes['fileExtension'])	  = explode('/', $mimeType);
-            list(, $attributes['base64Content'])      = explode(',', $data);
-            $attributes['binaryContent'] = base64_decode($attributes['base64Content']);
+            list(, $this->attributes['mimeType'])      = explode(':', $mimeType);
+            list(, $this->attributes['fileExtension'])	  = explode('/', $mimeType);
+            list(, $this->attributes['base64Content'])      = explode(',', $data);
+            $this->attributes['binaryContent'] = base64_decode($this->attributes['base64Content']);
 
-		} elseif ($this->getFile()) {
+        } elseif ($this->file) {
 
             $binaryContent = file_get_contents($this->getFile()->getPathname());
-            $attributes['binaryContent'] = $binaryContent;
-            $attributes['base64Content'] = base64_encode($binaryContent);
-            $attributes['mimeType'] = $this->getFile()->getMimeType();
-            list(, $attributes['fileExtension'])	  = explode('/', $this->getFile()->getMimeType());
+            $this->attributes['binaryContent'] = $binaryContent;
+            $this->attributes['base64Content'] = base64_encode($binaryContent);
+            $this->attributes['mimeType'] = $this->getFile()->getMimeType();
+            list(, $this->attributes['fileExtension'])	  = explode('/', $this->getFile()->getMimeType());
         }
-
-		return $attributes;
-	}
+    }
 }
