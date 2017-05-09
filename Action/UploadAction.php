@@ -18,6 +18,7 @@ use Symfony\Component\DependencyInjection\Container;
 use Ins\MediaApiBundle\Dto as Dto;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\VarDumper\VarDumper;
+use Symfony\Component\Filesystem\LockHandler;
 
 class UploadAction
 {
@@ -36,6 +37,11 @@ class UploadAction
 	 */
 	private $container;
 
+    /**
+     * @var LockHandler
+     */
+    private $lockHandler;
+
 	/**
 	 * @var Router
 	 */
@@ -46,6 +52,8 @@ class UploadAction
 		$this->mediaManager = $mediaManager;
 		$this->router = $router;
 		$this->container = $container;
+        $env = $this->container->get('kernel')->getEnvironment();
+        $this->lockHandler = new LockHandler("emma.{$env}.media_upload.lock");
 	}
 
 	/**
@@ -60,6 +68,7 @@ class UploadAction
 	 */
 	public function __invoke(Request $request)
 	{
+	    $this->lockHandler->lock(true);
 		if ($request->getContentType() === 'json')
 		{
             /** @var Dto\MediaElement $mediaElementDto */
