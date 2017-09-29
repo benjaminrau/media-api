@@ -30,7 +30,7 @@ class PostLoadEventListener {
     {
         $class = $this->container->getParameter('sonata.media.media.class');
         $entity = $args->getEntity();
-        if ($entity instanceof $class && $entity->getProviderName() && $this->requestStack->getCurrentRequest()) {
+        if ($entity instanceof $class && $entity->getProviderName()) {
 			/** @var MediaProviderInterface $provider */
             $provider = $this->container->get($entity->getProviderName());
 
@@ -42,7 +42,7 @@ class PostLoadEventListener {
                 list($context, $formatName) = explode('_', $key);
                 $format = $provider->getHelperProperties($entity, $key);
 
-				if (isset($format['src']) && strpos($format['src'], '/') === 0) {
+				if (isset($format['src']) && strpos($format['src'], '/') === 0 && $this->requestStack->getCurrentRequest()) {
 					$format['src'] = $this->requestStack->getCurrentRequest()->getSchemeAndHttpHost() . $format['src'];
 				}
 				$format['context'] = $context;
