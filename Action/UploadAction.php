@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Ins\MediaApiBundle\Dto as Dto;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\VarDumper\VarDumper;
@@ -32,7 +32,7 @@ class UploadAction
 	private $mediaManager;
 
 	/**
-	 * @var Container
+	 * @var ContainerInterface
 	 */
 	private $container;
 
@@ -41,7 +41,7 @@ class UploadAction
 	 */
 	private $router;
 
-	public function __construct(Serializer $serializer, MediaManager $mediaManager, Router $router, Container $container) {
+	public function __construct(Serializer $serializer, MediaManager $mediaManager, Router $router, ContainerInterface $container) {
 		$this->serializer = $serializer;
 		$this->mediaManager = $mediaManager;
 		$this->router = $router;
