@@ -3,7 +3,6 @@
     "type": "project",
     "description": "Example for integration of Sonata MediaBundle with ApiPlatform 2.0 including media upload and exposing media formats in GET item operation",
     "require": {
-        "sonata-project/media-bundle": "3.7.*@dev",
         "cweagans/composer-patches": "^1.5",
         "liip/imagine-bundle": "^1.6",
         "sensio/buzz-bundle": "dev-master"
