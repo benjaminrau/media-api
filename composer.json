@@ -12,12 +12,5 @@
         "psr-4": {
             "Ins\\MediaApiBundle\\": ""
         }
-    },
-    "extra": {
-        "patches": {
-            "sonata-project/media-bundle": {
-                "Move CategoryInterface": "https://raw.githubusercontent.com/benjaminrau/media-api/master/Resources/patches/media-bundle.patch"
-            }
-        }
     }
 }
