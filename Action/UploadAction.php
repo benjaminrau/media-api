@@ -4,9 +4,11 @@ namespace Ins\MediaApiBundle\Action;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Ins\MediaApiBundle\Entity\MediaElement;
+use Ins\MediaApiBundle\Event\UploadErrorEvent;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sonata\MediaBundle\Entity\MediaManager;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -41,11 +43,23 @@ class UploadAction
 	 */
 	private $router;
 
-	public function __construct(Serializer $serializer, MediaManager $mediaManager, Router $router, Container $container) {
+    /**
+     * @var EventDispatcher
+     */
+	private $eventDispatcher;
+
+    public function __construct(
+        Serializer $serializer,
+        MediaManager $mediaManager,
+        Router $router,
+        Container $container,
+        EventDispatcher $eventDispatcher
+    ) {
 		$this->serializer = $serializer;
 		$this->mediaManager = $mediaManager;
 		$this->router = $router;
 		$this->container = $container;
+		$this->eventDispatcher = $eventDispatcher;
 	}
 
 	/**
@@ -73,6 +87,10 @@ class UploadAction
                 foreach ($this->getFormErrors($form) as $error) {
                     $errors[] = $error['message'].' ';
                 }
+                $this->eventDispatcher->dispatch(
+                    UploadErrorEvent::NAME,
+                    new UploadErrorEvent($mediaElementDto, $request, $errors)
+                );
                 return new JsonResponse(json_encode($errors), Response::HTTP_BAD_REQUEST, $headers = array("Content-Type" => "application/json"), true);
             }
         }
