@@ -28,7 +28,7 @@ class UploadErrorEvent extends Event
     /**
      * @var array
      */
-    private $errors;
+    private $errors = [];
 
     /**
      * UploadErrorEvent constructor.
@@ -41,6 +41,7 @@ class UploadErrorEvent extends Event
     {
         $this->mediaElementDto = $mediaElementDto;
         $this->request = $request;
+        $this->errors = $errors;
     }
 
     /**
