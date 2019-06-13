@@ -5,7 +5,7 @@
     "require": {
         "cweagans/composer-patches": "^1.5",
         "liip/imagine-bundle": "^1.6",
-        "sensio/buzz-bundle": "dev-master"
+        "sensio/buzz-bundle": "~1.1.0"
     },
     "autoload": {
         "psr-4": {
