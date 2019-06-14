@@ -104,6 +104,7 @@ class UploadAction
 			$this->mediaManager->save($mediaElement);
 
 			$buzz = $this->container->get('buzz');
+			$buzz->getClient()->setVerifyPeer(false);
 			$buzzResponse = $buzz->get(
 				$this->router->generate('api_media_elements_get_item', array('id' => $mediaElement->getId()), Router::ABSOLUTE_URL),
 				['authorization' => $request->headers->get('authorization')]
