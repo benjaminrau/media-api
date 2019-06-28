@@ -60,8 +60,10 @@ class SproutVideoEventAction
         $video = json_decode($request->getContent(), true);
         $mediaElement = $this->mediaManager->findOneBy(array('providerReference' => $video['id']));
 
-        $this->provider->updateMetadata($mediaElement);
-        $this->mediaManager->save($mediaElement, true);
+        if ($mediaElement) {
+            $this->provider->updateMetadata($mediaElement);
+            $this->mediaManager->save($mediaElement, true);
+        }
 
 		return new Response(null, Response::HTTP_OK);
 	}
